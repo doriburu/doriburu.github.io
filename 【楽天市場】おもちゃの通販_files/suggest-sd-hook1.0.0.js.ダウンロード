@@ -1,0 +1,15 @@
+(function(){
+	if(typeof jQuery == "undefined"){
+		return;
+	}
+	jQuery.noConflict();
+	var $ = jQuery;
+	RSuggestHook=function(){};
+	RSuggestHook.prototype={
+		postInit: function(){
+			if (rsuggest.IeVersion == 6){
+				rsuggest.suggest.bgiframe();
+			}
+		}
+	};
+})();

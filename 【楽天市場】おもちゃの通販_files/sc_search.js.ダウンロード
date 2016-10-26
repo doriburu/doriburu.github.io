@@ -1,0 +1,336 @@
+(function(_W, _D, _L, _N) {
+    //----Check S_code DO NOT TOUCH--
+    if (typeof s == 'undefined') {
+        return;
+    }
+    var SC = {};
+    // set Add event definition
+    SC.addEvent = function(e, t, n) {
+        try {
+            if (e.addEventListener) {
+                e.addEventListener(t, n, false);
+            } else {
+                e.attachEvent("on" + t, n);
+            }
+        } catch (e) {
+            return;
+        }
+    };
+    //getUtility Function
+    SC.getElementValue = function(e) {
+        var t;
+        try {
+            t = _D.getElementsByName(e)[0].value;
+        } catch (e) {
+            t = "";
+        }
+        return t;
+    };
+    // get Regex
+    SC.getRegexMatch = function(e, t, n) {
+        var r = [],
+            i;
+        while (i = t.exec(e)) {
+            r.push(i[n]);
+        }
+        return r;
+    };
+    //---DO NOT TOUCH----
+    // space to declare global variable
+    var _P = _L.pathname;
+    var _H = _L.hostname;
+    var _Dir = _P.split('/');
+    SC.getTagID = function() {
+        try {
+            var _P = _L.pathname,
+                _S = _L.search,
+                _HREF = _L.href,
+                _rg, list = "",
+                tagListLength;
+
+            _rg = /(\&?tg\.?)(\d{7})/g;
+            if (_HREF.match(_rg)) {
+                var TagList = SC.getRegexMatch(_HREF, _rg, 2);
+                tagListLength = TagList.length;
+                for (var i = 0; i < tagListLength; i++) {
+                    list += "|" + TagList[i];
+                }
+                list = list.substring(1);
+                s.list1 = list;
+                s.eVar36 = list;
+            }
+
+            if (_S.match(/l-id\=.+\_\d{6}\_\d{7}\_\d{7}/g)) {
+                var lidRegex = /(l-id\=)(.+)(\_)(\d{6})(\_)(\d{7})(\_)(\d{7})/g;
+                var lidTagGroup = SC.getRegexMatch(_S, lidRegex, 6);
+                var lidTag = SC.getRegexMatch(_S, lidRegex, 8);
+                s.eVar35 = lidTagGroup;
+                if (!s.eVar36) {
+                    s.eVar36 = lidTag;
+                }
+            }
+        } catch (e) {
+            return -1;
+        }
+    };
+    // Calling Customized function to add extra variable to main request
+    SC.plugIn = function() {
+        try {
+            SC.getTagID();
+        } catch (e) {
+            return -1;
+        }
+    };
+    SC.setParameter = function() {
+        try {
+            //Write Your Code - Start
+            var _newCh;
+            var _Ch = SC.getElementValue("geChannel");
+            var _Layout = SC.getElementValue("geLayout");
+            var _View = SC.getElementValue("geView");
+            var _ResultNum = SC.getElementValue("geResultNumber");
+            var _Function = SC.getElementValue("geFunction");
+            var _FunctionDetail = SC.getElementValue("geFunctionDetail");
+            var _Genre = SC.getElementValue("geGenre");
+            var _Genre1st = SC.getElementValue("geGenre1st");
+            var _Genre2nd = SC.getElementValue("geGenre2nd");
+            var _Genre3rd = SC.getElementValue("geGenre3rd");
+            var _Shop = SC.getElementValue("geShop");
+            var _ShopGenre = SC.getElementValue("geShopGenre");
+            var _Keywords = SC.getElementValue("geKeywords");
+            var _AbTest = SC.getElementValue("geTestAB");
+            var _Event = SC.getElementValue("geEvent");
+            var _SearchOpt = SC.getElementValue("geSearchOpt");
+            var _View = SC.getElementValue("geView");
+            var _Sort = SC.getElementValue("geSort");
+            var _Tag = SC.getElementValue("geTag");
+            var _SearchDetail = SC.getElementValue("geSearchDetail");
+            var _Login = SC.getElementValue("geLogin");
+            var _geProp14 = SC.getElementValue("geProp14");
+            var _geProp15 = SC.getElementValue("geProp15");
+            var _geEVar30 = SC.getElementValue("geEVar30");
+            var _geEVar31 = SC.getElementValue("geEVar31");
+            var _UA = s.deviceType();
+
+            //20160328 additions: PC Search (DA-80)
+            var _ResultDetail = SC.getElementValue("geResultDetail");
+            var _SuggestFunc = SC.getElementValue("geSuggestFunc");
+            var _MySizeUsage = SC.getElementValue("geMySizeUsage");
+
+            SC.plugIn();
+            if (!_Layout) {
+                return;
+            }
+            if (!_Ch) {
+                _Ch = "Etc";
+            }
+
+            s.channel = s.eVar14 = _Ch;
+            _newCh = _Ch;
+
+            if (_AbTest) {
+                _newCh += ":" + _AbTest;
+                s.prop34 = _newCh;
+                if (_Login == "1") {
+                    s.prop13 = _newCh + "_login";
+                } else if (_Login == "0") {
+                    s.prop13 = _newCh + "_logoff";
+                } else {
+                    s.prop13 = _newCh;
+                }
+
+                //20160328 additions below:
+                if (_SuggestFunc) {
+                    s.prop13 += '|' + _newCh + '_' + _SuggestFunc;
+                }
+
+                if (_MySizeUsage) {
+                    s.prop13 += '|' + _newCh + '_mydata_' + _Genre + "_" + _MySizeUsage;
+                }
+                //end of 20160328 additions
+
+            }
+
+            if (_Event) {
+                _newCh += ":" + _Event;
+                s.prop9 = _Ch + ":" + _Event;
+            } else {
+                s.prop9 = s.prop10 = _Ch;
+            }
+
+            if (_Layout) {
+                s.eVar5 = _newCh + '<' + _Layout + '>';
+            }
+
+            if (_UA) {
+                s.eVar25 = _newCh + "[" + _UA + "]";
+            }
+
+            if (3000 >= Number(_ResultNum)) {
+                s.prop19 = _ResultNum;
+            }
+
+            if (_Shop) {
+                s.eVar6 = _Shop;
+            }
+            if (_SearchDetail) {
+                s.prop9 += ":" + _SearchDetail;
+                s.prop10 = s.prop9;
+                if (_FunctionDetail.length > 0) {
+                    s.prop10 += "_" + _FunctionDetail.split('>')[0];
+                } else {
+                    s.prop10 += "_Top";
+                }
+            }
+
+            //20160328 additions below:
+            if (_ResultDetail) {
+                s.prop10 += "_" + _ResultDetail;
+                if (_ResultDetail == 'nohit') {
+                    s.prop24 = _Keywords;
+                }
+            }
+            //end of 20160328 additions
+
+            if (_Function) {
+                s.pageName = _Ch + ": " + _Function + ">";
+                if (_FunctionDetail) {
+                    s.pageName += _FunctionDetail.replace(/NULL/g, '');
+                }
+            }
+            if (_Keywords) {
+                s.eVar2 = _Keywords;
+                s.eVar21 = "+1";
+            }
+            if (_geProp14) {
+                s.prop14 = _geProp14;
+            } else {
+                s.prop14 = _SearchDetail + ": " + _Sort;
+            }
+            if (_geProp15) {
+                s.prop15 = _geProp15;
+            } else {
+                s.prop15 = _SearchDetail + ": " + _View + "[" + _Layout + "]";
+            }
+            if (_geEVar30) {
+                s.eVar30 = _geEVar30;
+            } else {
+                s.eVar30 = _AbTest + "_" + _Ch + "[" + _Layout + "]";
+            }
+            if (_geEVar31) {
+                s.eVar31 = _geEVar31;
+            } else {
+                s.eVar31 = _AbTest + "_" + _Ch + "[" + _Layout + "]";
+            }
+            if (_Sort) {
+                s.eVar32 = _Sort + "|";
+            }
+            if (_View) {
+                s.eVar32 += _View + "|";
+            }
+
+            if (_SearchOpt) {
+                s.prop16 = _SearchOpt;
+                s.eVar32 += _SearchOpt;
+                if (_SearchOpt == "iAs") {
+                    s.prop17 = "asuraku";
+                } else {
+                    s.prop17 = "";
+                }
+            }
+
+            if (_Genre1st) {
+                _Genre = _Genre1st;
+                s.eVar18 = _Genre1st;
+                s.prop3 = _Ch + ": " + _Genre1st;
+                s.prop4 = _Ch + ": " + _Genre1st;
+            }
+            if (_Genre2nd) {
+                _Genre = _Genre2nd;
+                s.prop3 = _Ch + ": " + _Genre2nd;
+                s.prop4 = _Ch + ": " + _Genre2nd;
+            }
+            if (_Genre3rd) {
+                _Genre = _Genre3rd;
+                s.prop4 = _Ch + ": " + _Genre3rd;
+            }
+            if (_Tag) {
+                s.prop5 = _Ch + "_" + _Tag;
+            }
+            if (_Genre) {
+                s.prop12 = s.eVar24 = _Ch + ": " + _Genre;
+            } else {
+                s.prop12 = s.eVar24 = _Ch + ": 0";
+            }
+            //Write Your Code - End
+        } catch (e) {
+            s.prop73 = "-50";
+        }
+    };
+    _W.SC = {};
+    _W.SC.sendSTL = function(o, pev2, linktype) {
+        try {
+            var eVarRgx = /eVar[3][0-9]/g,
+                propRgx = /prop[1][0-9]|prop6$/g,
+                s = s_gi(s_account),
+                parameter;
+
+            s.linkTrackVars = 'None';
+            s.trackExternalLinks = false;
+            //override v51 logic to avoid error when scid contains we_
+            var overrideGVS = s.getVisitStart;
+            s.getVisitStart = function() {
+                return false;
+            };
+            for (parameter in o) {
+                if (o.hasOwnProperty(parameter)) {
+                    if (parameter.search(eVarRgx) > -1 || parameter.search(propRgx) > -1) {
+                        if (s.linkTrackVars === 'None') {
+                            s.linkTrackVars = parameter;
+                        } else {
+                            s.linkTrackVars += ',' + parameter;
+                        }
+                        s[parameter] = o[parameter];
+                    }
+                }
+            }
+            pev2 = pev2 || 'IchibaTop_CustomSTL';
+            linktype = linktype || 'o';
+            s.tl(this, linktype, pev2);
+            s.getVisitStart = overrideGVS;
+        } catch (e) {
+            return;
+        }
+    };
+    // jQuery
+    /*SC.addJquery = function(){
+        if( typeof jQuery == "undefined" ){
+            return 0;
+        }
+        var $ = jQuery;
+        //Write Your Code - Start
+
+        //Write Your Code - End
+        return 1;
+    }*/
+    /*SC.loadLinkTrack = function (){
+       var head= document.getElementsByTagName('head')[0];
+       var script= document.createElement('script');
+       script.type= 'text/javascript';
+       script.src= 'http://www.rakuten.co.jp/com/js/omniture/plugin/sc_linktrack.js';
+       head.appendChild(script);
+
+    }*/
+    // main request function. DO NOT MODIFY
+    SC.reqSiteCatalyst = function() {
+        SC.setParameter();
+        s.t();
+    };
+    SC.addEvent(_W, "load", SC.reqSiteCatalyst);
+    // calling SC.addJavaScript and SC.addJquery doing onload timing. DO NOT MODIFY
+    SC.addEvent(_W, "load", SC.addJavaScript);
+    //if(typeof jQuery=="undefined"){SC.addEvent(_W,"load",SC.addJquery)}else{SC.addJquery()};
+    //load loadlinktrack
+    //SC.addEvent(_W,"load",SC.loadLinkTrack);
+}(window, document, location, navigator));
+//Template Ver0.992 beta Designed by SeiichiTakeda. -->

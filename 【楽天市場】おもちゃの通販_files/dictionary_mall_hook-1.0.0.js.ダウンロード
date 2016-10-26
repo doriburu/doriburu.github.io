@@ -1,0 +1,65 @@
+/**
+ * @license mall_hook.js 
+ * Copyright (c) @year Rakuten.Inc
+ * Date : @compressesDate
+ */ 
+(function () {
+	if (typeof jQuery == "undefined") {
+		return;
+	}
+	jQuery.noConflict();
+	var $ = jQuery;
+
+	var dictionary = (function() {
+		if (!window.searchplat) {
+			searchplat = {};
+		}
+		if (!searchplat.dictionary) {
+			searchplat.dictionary = {};
+		}
+		return searchplat.dictionary;
+	})();
+
+	var hooks= (function() {
+		if (!dictionary.hooks) {
+			dictionary.hooks = {};
+		}
+		return dictionary.hooks;
+	})();
+
+	var FALSE = 0;
+	var TRUE = 1;
+	var Hook_rltd_mall = function () {};
+	Hook_rltd_mall.prototype = {
+		openElemCss: "rsrKeyList",
+		rltdElemCss: "rsrDispTxtBox03.clfx",
+		hideElemParentCss: "js-on",
+		hideElemCss: "dropdown",
+		hideListCss: "border",
+		addAction: function (rltd, position, link_num) {
+			var partsname = "dict_" + position + "_" + link_num;
+			try {
+				rltd.trackingPartsCounter(partsname);
+			} catch (e) {
+				return true;
+			}
+		}
+	};
+	hooks.Hook_rltd_mall = Hook_rltd_mall;
+	
+	// dym_obj for mall 
+	var Hook_dym_mall = function () {};
+	Hook_dym_mall.prototype = {
+		openElemCss: "rsrDispTxtBoxIf",
+		addAction: function (rltd, position, link_num) {
+			var partsname = "dict_" + position + "_" + link_num;
+			try {
+				rltd.trackingPartsCounter(partsname);
+			} catch (e) {
+				return true;
+			}
+		}
+	};
+	hooks.Hook_dym_mall = Hook_dym_mall;
+
+})();

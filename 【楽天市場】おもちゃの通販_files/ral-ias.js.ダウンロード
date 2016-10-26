@@ -1,0 +1,78 @@
+var RAL = RAL || {};
+RAL.callQueue = RAL.callQueue || [];
+(function() {
+  
+  var $ = (typeof jQuery === 'function') ? jQuery : undefined;
+
+  function trim(str) {
+    return (str && str.replace(/^\s+|\s+$/g, ''));
+  }
+  function getIntValue(str) {
+    var val = window.parseInt(str, 10);
+    return (isNaN(val) ? undefined : val);
+  }
+  function getParam(id, convert) {
+    var input = document.getElementById(id);
+    var param = (input && input.value && trim(input.value));
+    if (param && convert) {
+      param = convert(param);
+    }
+    return param;
+  }
+  function getArray(id, convert) {
+    var input = document.getElementById(id);
+    var str = (input && input.value && input.value.replace(/^\s*\[?|\]?\s*$/g, ''));
+    var elts = [];
+    if (str) {
+      elts = str.split(',');
+      for (var i = 0; i < elts.length; ++i) {
+        elts[i] = trim(elts[i]);
+        if (convert) {
+          elts[i] = convert(elts[i]);
+        }
+      }
+    }
+    return elts;
+  }
+  
+  var scriptEl = document.createElement('script');
+  scriptEl.type = 'text/javascript';
+  scriptEl.async = 'async';
+  scriptEl.defer = 'defer';
+  scriptEl.src = '//a.ichiba.jp.rakuten-static.com/com/rat/js/ral-1.0.18.js?v=20150123';
+  var targetEl = document.getElementsByTagName('script')[0];
+  targetEl.parentNode.insertBefore(scriptEl, targetEl);
+  
+  
+  var acc = getParam('ratIasAccountId', getIntValue);
+  var aid = getParam('ratIasServiceId', getIntValue);
+  var parts_id = getParam('ratIasPartsId');
+  var ias_qsess = getParam('ratIasQsess');
+  var ias_itemid = getArray('ratIasItemid');
+  var ias_unitid = getArray('ratIasUnitid');
+  var ias_type = getArray('ratIasType');
+  var etype = getParam('ratIasEtype');
+  var iasDiv = getParam('ratIasDiv');
+  
+  RAL.callQueue.push(['setAccountId', acc]);
+  RAL.callQueue.push(['setServiceId', aid]);
+  if (parts_id) { RAL.callQueue.push(['setCustomParameters', {'parts_id': parts_id}]); }
+  if (ias_qsess) { RAL.callQueue.push(['setCustomParameters', {'ias_qsess': ias_qsess}]); }
+  if (ias_itemid) { RAL.callQueue.push(['setCustomParameters', {'ias_itemid': ias_itemid}]); }
+  if (ias_unitid) { RAL.callQueue.push(['setCustomParameters', {'ias_unitid': ias_unitid}]); }
+  if (ias_type) { RAL.callQueue.push(['setCustomParameters', {'ias_type': ias_type}]); }
+  RAL.callQueue.push(['setEvent', etype]);
+  
+  if ($ && typeof $.fn.appear === 'function') {
+    var dataUnit = $(iasDiv);
+    dataUnit.appear(function() {
+      var index = dataUnit.index(this);
+      if (index < ias_itemid.length) {
+        RAL.callQueue.push(['setAccountId', acc]);
+        RAL.callQueue.push(['setServiceId', aid]);
+        RAL.callQueue.push(['appendParameters', {'sresv': ias_itemid[index]}]);
+        RAL.callQueue.push(['setEvent', 'scroll']);
+      }
+    });
+  }
+})();
