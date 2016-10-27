@@ -2,8 +2,9 @@
 <html lang="ja" manifest="no-cache.appcache">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv=”Pragma” content=”no-cache”>
-    <meta http-equiv=”Cache-Control” content=”no-cache”>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">    
     <title>楽天ごにょごにょテスト</title>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="jquery.xdomainajax.js"></script>
@@ -58,20 +59,17 @@
                 else
                 {
                     console.log(keyword + "： お宝！");
-                    $('#result').append('<p>' + keyword + '： お宝！</p>');
+                    $('#result').append('<p>' + keyword + '</p>');
                 }
             });
         }
     
         function searchButton() {
             $('#result').empty();
+            $('#result').append('<p>お宝！</p>');
             let searchString = $('#searchTarget').val();
             let searchArry = searchString.split("\n");
             searchArry.forEach(getSuggest);
-            
-            //alert(searchArry[1]);
-            
-            //$('#result').append('<p>p要素を追加しました</p>');
         }
     </script>
 </head>
