@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja" manifest="no-cache.appcache">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">    
+    <title>楽天ごにょごにょテスト</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="jquery.xdomainajax.js"></script>
+    <script>
+        var idCount = Number(0);
+
+        // DOMの読み込みが全て完了したら
+        $(document).ready(
+            function() {
+                $('#searchButton').click(searchButton);
+                $('#searchTarget').val("おもちゃ\n仮面ライダー\n椅子");
+                //$('#searchTarget').val("おもちゃ");
+            }
+        );
+
+        function getSuggest(element, index, array)
+        {
+            let suggestURL = "http://api.suggest.search.rakuten.co.jp/suggest?cl=dir&rid=0&sid=0&oe=utf-8&q=" + element;
+            console.log(suggestURL);
+            $.ajax({
+                type: "GET",
+                url: suggestURL,
+                dataType: "jsonp",
+                jsonp: "callback",
+                success: function(data){
+                    //console.log(data.result[0]);
+                    for (let i=0;i<data.result.length;i++)
+                    {
+                        //console.log(data.result[i]);
+                        getCPCofKeyword(data.result[i]);
+                    }
+                }
+                      
+            });
+        }
+        
+        function getCPCofKeyword(keyword)
+        {
+            //console.log(keyword);
+            let keywordString = keyword[0].replace(/\s/g, "+");
+            let searchURL = "http://search.rakuten.co.jp/search/mall/" + keywordString;
+            console.log(keywordString);
+            idCount++;
+
+            let analyzingTargetId = "analyzingTarget" + idCount.toString();
+            //  
+            let iframeHtml = '<iframe class="analyzingTargetFrame" style="display:none" id="' + analyzingTargetId + '" src="' + searchURL + '"></iframe>';
+            //console.log(iframeHtml);
+            $('#analyzingTarget').append(iframeHtml);
+            
+            $('#' + analyzingTargetId).on('load', function() {
+                if ($(this).find("adsDisplayArea div").length)
+                {
+                    console.log(keyword + "： 使用済み");
+                    //$('#result').append('<p>' + keyword + '： 使用済み</p>');
+                }
+                else
+                {
+                    console.log(keyword + "： お宝！");
+                    $('#result').append('<p>' + keyword + '</p>');
+                }
+            });
+            
+        }
+    
+        function searchButton() {
+            $('#result').empty();
+            $('#result').append('<p>お宝キーワードは以下</p>');
+            let searchString = $('#searchTarget').val();
+            let searchArry = searchString.split("\n");
+            searchArry.forEach(getSuggest);
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <button id="searchButton">CPC無しキーワード検索</button>
+    </header>
+    <textarea id="searchTarget" rows="20" cols="30"></textarea>
+    <div id="result"></div>
+    <div id="analyzingTarget"></div>
+</body>
+</html>
