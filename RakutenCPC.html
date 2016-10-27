@@ -12,8 +12,8 @@
         $(document).ready(
             function() {
                 $('#searchButton').click(searchButton);
-                //$('#searchTarget').val("おもちゃ\n仮面ライダー\n椅子");
-                $('#searchTarget').val("おもちゃ");
+                $('#searchTarget').val("おもちゃ\n仮面ライダー\n椅子");
+                //$('#searchTarget').val("おもちゃ");
             }
         );
 
@@ -49,18 +49,22 @@
               type: 'GET',
               url: searchURL,
             }).done(function (data) {
+                // TODO ここでadsDisplayAreaに書き込んでいるajaxのjsonpをロードして解析すると良いかも
                 if ($(data.results[0]).find("#adsDisplayArea div").length)
                 {
                     console.log(keyword + "： 使用済み");
+                    $('#result').append('<p>' + keyword + '： 使用済み</p>');
                 }
                 else
                 {
                     console.log(keyword + "： お宝！");
+                    $('#result').append('<p>' + keyword + '： お宝！</p>');
                 }
             });
         }
     
         function searchButton() {
+            $('#result').empty();
             let searchString = $('#searchTarget').val();
             let searchArry = searchString.split("\n");
             searchArry.forEach(getSuggest);
